@@ -1,0 +1,118 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dominic Howard Kissing Game</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background-color: #000;
+      color: #fff;
+      text-align: center;
+    }
+    canvas {
+      border: 2px solid #fff;
+      margin-top: 20px;
+      cursor: crosshair;
+    }
+    .controls {
+      margin: 20px 0;
+    }
+    .photo-picker button {
+      margin: 0 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Dominic Howard Kissing Game 💋</h1>
+
+  <div class="controls">
+    <div class="photo-picker">
+      <button onclick="setImage(0)">Photo 1</button>
+      <button onclick="setImage(1)">Photo 2</button>
+      <button onclick="setImage(2)">Photo 3</button>
+    </div>
+    <button onclick="changeColor()">Change Lipstick Color</button>
+    <button onclick="clearCanvas()">Clear</button>
+    <button onclick="saveImage()">Save</button>
+    <button onclick="toggleAudio()">🔊 Music</button>
+  </div>
+
+  <canvas id="kissCanvas" width="600" height="800"></canvas>
+
+  <audio id="music" loop>
+    <source src="supermassive_black_hole_clip.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    const canvas = document.getElementById('kissCanvas');
+    const ctx = canvas.getContext('2d');
+    const images = ["dom1.jpg", "dom2.jpg", "dom3.jpg"];
+    const secretImage = "dom_secret.jpg";
+    const baseImage = new Image();
+    let currentImage = 0;
+    let kissColor = "#ff3366";
+    let kissCount = 0;
+
+    function setImage(index) {
+      currentImage = index;
+      baseImage.src = images[index];
+    }
+
+    baseImage.onload = () => ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
+    baseImage.src = images[0];
+
+    canvas.addEventListener('click', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      drawKiss(x, y);
+      kissCount++;
+      if (kissCount === 10) showSecret();
+    });
+
+    function drawKiss(x, y) {
+      ctx.fillStyle = kissColor;
+      ctx.beginPath();
+      ctx.ellipse(x, y, 30, 15, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function changeColor() {
+      const colors = ["#ff3366", "#ff69b4", "#cc0000", "#ffccff"];
+      kissColor = colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    function clearCanvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
+      kissCount = 0;
+    }
+
+    function saveImage() {
+      const link = document.createElement('a');
+      link.download = 'kissing_game.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    }
+
+    function toggleAudio() {
+      const audio = document.getElementById("music");
+      if (audio.paused) {
+        audio.play();
+      } else {
+        audio.pause();
+      }
+    }
+
+    function showSecret() {
+      const secret = new Image();
+      secret.onload = () => ctx.drawImage(secret, 0, 0, canvas.width, canvas.height);
+      secret.src = secretImage;
+    }
+  </script>
+</body>
+</html>
